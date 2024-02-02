@@ -1,37 +1,45 @@
 const Product = require("../models/productModel");
+const errorHandler = require("../utils/errorHandler");
+const catchAsyncErrors = require("../middleware/catchAsyncError");
 
 // Create Product - Admin
-const createProduct = async (req, res, next) => {
+const createProduct = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.create(req.body);
 
   res.status(201).json({
     success: true,
     product,
   });
-};
+});
 
 // Get All Products
-const getAllProducts = async (req, res, next) => {
+const getAllProducts = catchAsyncErrors(async (req, res, next) => {
   const products = await Product.find({});
 
   res.status(200).json({
     success: true,
     products,
   });
-};
+});
 
 // Get Single Product
-const getProduct = async (req, res, next) => {
+const getProduct = catchAsyncErrors(async (req, res, next) => {
+  const _product = await Product.findById(req.params.id);
+
+  if (!_product) {
+    return next(errorHandler("Product not found", 400));
+  }
+
   const product = await Product.findById(req.params.id);
 
   res.status(200).json({
     success: true,
     product,
   });
-};
+});
 
 // Update Product - Admin
-const updateProduct = async (req, res, next) => {
+const updateProduct = catchAsyncErrors(async (req, res, next) => {
   const _product = await Product.findById(req.params.id);
 
   if (!_product) {
@@ -51,17 +59,14 @@ const updateProduct = async (req, res, next) => {
     success: true,
     product,
   });
-};
+});
 
 // Delete Product - Admin
-const deleteProduct = async (req, res, next) => {
+const deleteProduct = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
-    return res.status(500).json({
-      success: false,
-      message: "Product not found",
-    });
+    return next(errorHandler("Product not found", 400));
   }
 
   await Product.findByIdAndDelete(req.params.id);
@@ -69,7 +74,7 @@ const deleteProduct = async (req, res, next) => {
   res.status(200).json({
     success: true,
   });
-};
+});
 
 module.exports = {
   createProduct,
