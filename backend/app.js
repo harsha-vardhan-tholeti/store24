@@ -12,10 +12,12 @@ app.use(cookieParser());
 // Route Imports
 const ProductRouter = require("./routes/productRoutes");
 const UserRouter = require("./routes/userRoutes");
+const OrderRouter = require("./routes/orderRoutes");
 
 // Routes
 app.use("/api/v1/products", ProductRouter);
 app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/orders", OrderRouter);
 
 // Middleware for Errors
 app.use(errorMiddleware);
